@@ -54,12 +54,12 @@ def addon(id):
         if url.startswith("ftp://"):
             continue
         xbmc.executebuiltin("PlayMedia(%s)" % url)
-        countdown = 10
+        countdown = int(plugin.get_setting('countdown'))
         while countdown:
             time.sleep(1)
             countdown = countdown -1
             if xbmc.Player().isPlaying():
-                time.sleep(5)
+                time.sleep(int(plugin.get_setting('wait')))
                 break
         xbmcvfs.mkdirs("special://temp/%s/" % id)
         path = xbmc.translatePath("special://temp/%s/%s.png" % (id,re.sub("[^\w ]","",name, flags=re.UNICODE)))
