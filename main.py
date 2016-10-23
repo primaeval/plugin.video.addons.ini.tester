@@ -40,6 +40,7 @@ def remove_formatting(label):
 
 @plugin.route('/addon/<id>')
 def addon(id):
+    f = xbmcvfs.File('special://profile/addon_data/plugin.video.addons.ini.tester/%s.ini' % id,'wb')
     addon = plugin.get_storage(id)
     items = []
     for name in sorted(addon):
@@ -55,17 +56,21 @@ def addon(id):
             continue
         xbmc.executebuiltin("PlayMedia(%s)" % url)
         countdown = int(plugin.get_setting('countdown'))
+        comment = "#"
         while countdown:
             time.sleep(1)
             countdown = countdown -1
             if xbmc.Player().isPlaying():
                 time.sleep(int(plugin.get_setting('wait')))
+                comment = ""
                 break
+        str = "%s%s=%s\n" % (comment,name,url)
+        f.write(str.encode("utf8"))
         xbmcvfs.mkdirs("special://temp/%s/" % id)
         path = xbmc.translatePath("special://temp/%s/%s.png" % (id,re.sub("[^\w ]","",name, flags=re.UNICODE)))
         xbmc.executebuiltin("TakeScreenshot(%s)" % path)
         xbmc.executebuiltin("PlayerControl(Stop)")
-        
+    f.close()
     return items
     
 @plugin.route('/all')
