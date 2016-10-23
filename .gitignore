@@ -63,3 +63,4 @@ target/
 *.bak
 *~
 *.orig
+addons.ini
